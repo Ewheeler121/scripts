@@ -1,0 +1,9 @@
+#!/bin/sh
+
+rm -rf ~/.renpy
+ln -s "$XDG_DATA_HOME"/renpy ~/.renpy 
+"$@"
+
+if pgrep "renpy" > /dev/null; then
+    rm ~/.renpy
+fi

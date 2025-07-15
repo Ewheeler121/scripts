@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+    echo "no file passed in"
+    exit 0
+fi
+name=$(basename $1)
+
+gpg -d $1 > /tmp/"$name"
+xdg-open /tmp/"$name"
+rm /tmp/"$name"

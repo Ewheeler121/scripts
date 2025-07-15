@@ -1,0 +1,19 @@
+#!/bin/sh
+
+cleanup() {
+    rm "$HOME/.minecraft"
+}
+
+if [ -L "$HOME/.minecraft" ] && pgrep -x "minecraft-la" > /dev/null; then
+    /usr/bin/minecraft-launcher "$@" &
+    exit 0
+else
+    trap cleanup EXIT
+    if [ -d "$HOME/.minecraft" ] && [ ! -L "$HOME/.minecraft" ]; then
+        rm -rf "$HOME/.minecraft"
+    fi
+    ln -s "$XDG_DATA_HOME/minecraft" "$HOME/.minecraft" || notify-send "Failed to create symlink to ~/.minecraft"
+    /usr/bin/minecraft-launcher "$@" &
+fi
+
+wait
