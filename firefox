@@ -4,6 +4,12 @@ cleanup() {
     rm "$HOME/.mozilla"
 }
 
+if [ -e "$HOME/.mozilla" ]; then
+    while lsof +D "$HOME/.mozilla" > /dev/null 2>&1; do
+        sleep 1
+    done
+fi
+
 if [ -L "$HOME/.mozilla" ] && pgrep -x "firefox" > /dev/null; then
     /usr/bin/firefox "$@" &
     exit 0
@@ -12,7 +18,10 @@ else
     if [ -d "$HOME/.mozilla" ] && [ ! -L "$HOME/.mozilla" ]; then
         rm -rf "$HOME/.mozilla"
     fi
-    ln -s "$XDG_DATA_HOME/mozilla" "$HOME/.mozilla" || notify-send "Failed to create symlink to ~/.mozilla"
+    ln -s "$XDG_DATA_HOME/mozilla" "$HOME/.mozilla" || {
+            notify-send "Failed to create symlink to ~/.mozilla"
+            exit 1
+    }
     /usr/bin/firefox "$@" &
 fi
 
