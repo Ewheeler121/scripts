@@ -11,7 +11,7 @@ case $BUTTON in
 - Shows 🔃 if syncing mail
 - Left click opens neomutt
 - Middle click syncs mail" ;;
-    3) setsid -f mailsync >/dev/null ;;
+    3) setsid -f mailsync > /dev/null ;;
 	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
 esac
 
