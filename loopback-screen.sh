@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo -v || echo "failed to use sudo" && exit 1
+sudo -v || { echo "failed to use sudo" && exit 1; }
 
 sudo modprobe v4l2loopback video_nr=9 card_label=Video-Loopback exclusive_caps=1
 

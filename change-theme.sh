@@ -6,19 +6,37 @@ $HOME/Public/suckless/st/
 $HOME/Public/suckless/dwm/
 "
 
-if [ $# -eq 0 ]; then
-    echo "usage: $0 <wallpaper>"
+default=false
+wallpaper=""
+
+while getopts "d" opt; do
+    case $opt in
+        d) 
+            default=true;;
+        *) 
+            echo "usage: $0 <wallpaper>"
+            exit 1;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [ $# -lt 1 ]; then
+    echo "Error: file argument is required"
+    echo "Usage: $0 [-d] <wallpaper>"
     exit 1
 fi
 
-if [ ! -f "$1" ]; then
+wallpaper="$1"
+
+if [ ! -f "$wallpaper" ]; then
     echo "Wallpaper file not found: $1"
     exit 1
 fi
 
 sudo -v || { echo "failed to use sudo" && exit 1; }
 
-wal -s -t -i "$1" 
+wal -s -t -i "$wallpaper" 
 pywalfox update
 
 # hacky work-a-round for wal wanting a patch that breaks DWM
@@ -27,7 +45,11 @@ sed -i '/^[[:space:]]*\[SchemeUrg\]/d' "$HOME/.cache/wal/colors-wal-dwm.h"
 for dir in $suckless_dirs; do
         cd "$dir" || { printf "failed to enter %s\n" "$1" && exit; }
         make clean
-        sudo make install
+        if $default; then
+            sudo make install
+        else
+            sudo -E make install
+        fi
         make clean
 done
 
